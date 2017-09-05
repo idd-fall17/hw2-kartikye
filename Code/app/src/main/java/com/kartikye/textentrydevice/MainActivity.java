@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.things.pio.PeripheralManagerService;
 
@@ -32,13 +33,16 @@ public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /** CHANGE THE RIGHT-HAND SIDE OF THIS LINE TO THE NAME OF YOUR APPLICATION CLASS **/
-    private SimpleBoard textEntryApp = new TextEntryBoard();
+    private TextEntryBoard textEntryApp = new TextEntryBoard();
 
     /** DON'T CHANGE THE CODE BELOW - PUT YOUR CODE INTO YOUR APPLICATION CLASS **/
     private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
         Log.d(TAG, "java.lang.ObjectonCreate");
 
         PeripheralManagerService service = new PeripheralManagerService();
@@ -48,7 +52,7 @@ public class MainActivity extends Activity {
         Log.d(TAG, "Available SPI: " + service.getSpiBusList());
         Log.d(TAG, "Available UART: " + service.getUartDeviceList());
 
-        textEntryApp.setup();
+        textEntryApp.setup((TextView) findViewById(R.id.text_box));
         handler.post(loopRunnable);
 
     }

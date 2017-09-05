@@ -1,6 +1,7 @@
 package com.kartikye.textentrydevice;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.things.pio.Gpio;
 
@@ -11,9 +12,24 @@ import com.google.android.things.pio.Gpio;
 public class TextEntryBoard extends SimplePicoPro{
 
     float swivelVoltage;
+    String[][] characters = {{"z", ".", "", " ", "\n"},
+                             {"P", "Q", "J", "X", "V"},
+                             {"Y", "L", "G", "K", "M"},
+                             {"S", "R", "C", "D", "E"},
+                             {"H", "E", "I", "U", "N"},
+                             {"T", "O", "A", "W", "B"}};
+    int keyset;
 
-    @Override
-    public void setup() {
+    TextView textbox;
+    String text;
+
+    public void setup(){
+        setup(null);
+    }
+
+    public void setup(TextView tb) {
+        textbox = tb;
+        text = "";
         //Initialize Analog
         analogInit();
 
@@ -35,34 +51,43 @@ public class TextEntryBoard extends SimplePicoPro{
     @Override
     public void loop() {
         swivelVoltage = analogRead(A0);
-        Log.d("Analog 0", "" + swivelVoltage);
-        if (swivelVoltage == 0) {
-
-        } else if (swivelVoltage == 1) {
-
-        } else if (swivelVoltage == 2) {
-
-        } else if (swivelVoltage == 3) {
-
-        } else if (swivelVoltage == 4) {
-
-        } else if (swivelVoltage == 5) {
-
+        if (swivelVoltage <= 0.1) {
+            keyset = 0;
+        } else if (swivelVoltage > .5 && swivelVoltage < .8) {
+            keyset = 1;
+        } else if (swivelVoltage > 1.2 && swivelVoltage < 1.45) {
+            keyset = 2;
+        } else if (swivelVoltage > 1.8 && swivelVoltage < 2.2) {
+            keyset = 3;
+        } else if (swivelVoltage > 2.6 && swivelVoltage < 2.98) {
+            keyset = 4;
+        } else if (swivelVoltage > 3.05 && swivelVoltage < 3.4) {
+            keyset = 5;
         }
+
+        textbox.setText(text);
 
     }
 
     void digitalEdgeEvent(Gpio pin, boolean value){
         if (pin == GPIO_128){
-
+            Log.d("Press", characters[keyset][0]);
+            text += characters[keyset][0];
         } else if (pin == GPIO_39) {
-
+            Log.d("Press", characters[keyset][1]);
+            text += characters[keyset][1];
         } else if (pin == GPIO_37) {
-
+            Log.d("Press", characters[keyset][2]);
+            if (keyset == 0){
+                text =  text.substring(0, text.length() - 1);
+            }
+            text += characters[keyset][2];
         } else if (pin == GPIO_35) {
-
+            Log.d("Press", characters[keyset][3]);
+            text += characters[keyset][3];
         } else if (pin == GPIO_34) {
-
+            Log.d("Press", characters[keyset][4]);
+            text += characters[keyset][4];
         }
     }
 }
